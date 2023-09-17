@@ -98,13 +98,13 @@ Crear un archivo ```metadata.json``` y guardarlo en Google Cloud Storage
   "parameters": [
     {
       "name": "input_gcs",
-      "label": "Input Bucket.",
-      "helpText": " Nombre del bucket de donde se obrtendrán los datasets."
+      "label": "Input Bucket",
+      "helpText": "Nombre del bucket de donde se obtendrán los datasets."
     },
     {
       "name": "output_table",
-      "label": "Tabla destino en BigQuery.",
-      "helpText": "Nombre de la tabla destino en BigQuery"
+      "label": "Tabla destino en BigQuery",
+      "helpText": "Nombre de la tabla destino en BigQuery."
     }
   ]
 }
