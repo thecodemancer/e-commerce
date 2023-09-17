@@ -93,25 +93,18 @@ Crear un archivo ```metadata.json``` y guardarlo en Google Cloud Storage
 
 ```
 {
-  "name": "Streaming beam Python flex template",
-  "description": "Streaming beam example for python flex template.",
+  "name": "E-Commerce Python flex template",
+  "description": "Procesamiento batch para el proyecto E-Commerce.",
   "parameters": [
     {
-      "name": "input_subscription",
-      "label": "Input PubSub subscription.",
-      "helpText": "Name of the input PubSub subscription to consume from.",
-      "regexes": [
-        "projects/[^/]+/subscriptions/[a-zA-Z][-_.~+%a-zA-Z0-9]{2,}"
-      ]
+      "name": "input_gcs",
+      "label": "Input Bucket.",
+      "helpText": " Nombre del bucket de donde se obrtendrán los datasets."
     },
     {
       "name": "output_table",
-      "label": "BigQuery output table name.",
-      "helpText": "Name of the BigQuery output table name.",
-      "isOptional": true,
-      "regexes": [
-        "([^:]+:)?[^.]+[.].+"
-      ]
+      "label": "Tabla destino en BigQuery.",
+      "helpText": "Nombre de la tabla destino en BigQuery"
     }
   ]
 }
