@@ -3,7 +3,7 @@
   "description": "Procesamiento batch para el proyecto E-Commerce.",
   "parameters": [
     {
-      "name": "input_gsc",
+      "name": "input_gcs",
       "label": "Input Bucket.",
       "helpText": " Nombre del bucket de donde se obrtendrán los datasets."
     },
