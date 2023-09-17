@@ -81,7 +81,7 @@ gcloud projects add-iam-policy-binding ${proyecto} --member="serviceAccount:${pr
 
 Antes de poder enviar o extraer imágenes, configure Docker para autenticar solicitudes de Artifact Registry. Para configurar la autenticación en los repositorios de Docker, ejecute el siguiente comando:
 
-```gcloud auth configure-docker us-east1-docker.pkg.dev```
+```gcloud auth configure-docker ${region}-docker.pkg.dev```
 
 # Crear archivo de requirements
 
