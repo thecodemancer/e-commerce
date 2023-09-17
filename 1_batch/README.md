@@ -8,7 +8,7 @@
 Creamos variables que se usarán durante la configuración
 
 ```
-export proyecto=formal-shell-295407
+export proyecto=thecodemancer-e-commerce-12345
 export region=us-east1
 export bucket=e_commerce
 export dataset=E_Commerce
@@ -18,16 +18,22 @@ export tabla=proyeccion_y_ventas
 # Crear Proyecto
 
 ```
-gcloud projects create thecodemancer-e-commerce-12345
+gcloud projects create ${proyecto}
 ```
 
 Seleccionar el proyecto
 
-```gcloud config set project formal-shell-295407```
+```gcloud config set project ${proyecto}```
 
 # Configurar la facturación
 
-gcloud services enable dataflow compute_component logging storage_component storage_api bigquery pubsub cloudresourcemanager.googleapis.com appengine.googleapis.com artifactregistry.googleapis.com cloudscheduler.googleapis.com cloudbuild.googleapis.com
+Verificar que la cuenta de facturación está asociada al proyecto
+
+```
+gcloud beta billing projects describe thecodemancer-e-commerce-12345
+```
+
+gcloud services enable dataflow compute_component logging storage_component storage_api bigquery pubsub cloudresourcemanager.googleapis.com artifactregistry.googleapis.com
 
 # Configurar los permisos
 ```
