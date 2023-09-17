@@ -7,13 +7,13 @@
 
 Creamos variables que se usarán durante la configuración
 
+```
 export proyecto=formal-shell-295407
 export region=us-east1
-bucket=e_commerce
-dataset=E_Commerce
-tabla=ventas_pedidos_proyeccion
-topico=e_commerce
-suscripcion=e_commerce
+export bucket=e_commerce
+export dataset=E_Commerce
+export tabla=proyeccion_y_ventas
+```
 
 # Crear Proyecto
 
