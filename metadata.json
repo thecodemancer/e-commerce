@@ -1,0 +1,16 @@
+{
+  "name": "E-Commerce Python flex template",
+  "description": "Procesamiento batch para el proyecto E-Commerce.",
+  "parameters": [
+    {
+      "name": "input_gsc",
+      "label": "Input Bucket.",
+      "helpText": " Nombre del bucket de donde se obrtendrán los datasets."
+    },
+    {
+      "name": "output_table",
+      "label": "Tabla destino en BigQuery.",
+      "helpText": "Nombre de la tabla destino en BigQuery"
+    }
+  ]
+}
