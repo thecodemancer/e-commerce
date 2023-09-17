@@ -18,7 +18,7 @@ export tabla=proyeccion_y_ventas
 # Crear Proyecto
 
 ```
-gcloud projects create formal-shell-295407
+gcloud projects create thecodemancer-e-commerce-12345
 ```
 
 Seleccionar el proyecto
