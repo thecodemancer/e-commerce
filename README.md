@@ -59,6 +59,10 @@ Antes de poder enviar o extraer imágenes, configure Docker para autenticar soli
 
 ```gcloud auth configure-docker us-east1-docker.pkg.dev```
 
+# Crear archivo de requirements
+
+```echo "apache-beam[gcp]==2.41.0" > requirements.txt```
+
 # Metadata
 
 Crear un archivo ```metadata.json``` y guardarlo en Google Cloud Storage
