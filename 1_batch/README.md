@@ -9,10 +9,13 @@ Creamos variables que se usarán durante la configuración
 
 ```
 export proyecto=thecodemancer-e-commerce-12345
+export proyecto_numero=403223704591
 export region=us-east1
-export bucket=e_commerce
+export bucket=thecodemancer_e_commerce
 export dataset=E_Commerce
 export tabla=proyeccion_y_ventas
+export correo=davidregalado255@gmail.com
+export artifact_registry_name=e-commerce
 ```
 
 # Crear Proyecto
@@ -27,21 +30,15 @@ Seleccionar el proyecto
 
 # Configurar la facturación
 
-Verificar que la cuenta de facturación está asociada al proyecto
-
+Verificar que la cuenta de facturación está asociada al proyecto. Ver [esta página](https://cloud.google.com/billing/docs/how-to/verify-billing-enabled#gcloud?hl=en).
 ```
 gcloud beta billing projects describe thecodemancer-e-commerce-12345
 ```
 
+# Habilitar APIs
+
+```
 gcloud services enable dataflow compute_component logging storage_component storage_api bigquery pubsub cloudresourcemanager.googleapis.com artifactregistry.googleapis.com
-
-# Configurar los permisos
-```
-gcloud projects add-iam-policy-binding formal-shell-295407 --member="user:davidregalado255@gmail.com" --role=roles/iam.serviceAccountUser
-```
-
-```
-gcloud projects add-iam-policy-binding formal-shell-295407 --member="serviceAccount:999513749112-compute@developer.gserviceaccount.com" --role=roles/artifactregistry.reader
 ```
 
 # Crear credenciales de autenticación local para la cuenta de Google:
@@ -50,18 +47,29 @@ gcloud projects add-iam-policy-binding formal-shell-295407 --member="serviceAcco
 gcloud auth application-default login
 ```
 
+
+# Configurar los permisos
+```
+gcloud projects add-iam-policy-binding ${proyecto} --member="user:${correo}" --role=roles/iam.serviceAccountUser
+```
+
+```
+gcloud projects add-iam-policy-binding ${proyecto} --member="serviceAccount:${proyecto_numero}-compute@developer.gserviceaccount.com" --role=roles/dataflow.admin
+gcloud projects add-iam-policy-binding ${proyecto} --member="serviceAccount:${proyecto_numero}-compute@developer.gserviceaccount.com" --role=roles/dataflow.worker
+gcloud projects add-iam-policy-binding ${proyecto} --member="serviceAccount:${proyecto_numero}-compute@developer.gserviceaccount.com" --role=roles/bigquery.dataEditor
+gcloud projects add-iam-policy-binding ${proyecto} --member="serviceAccount:${proyecto_numero}-compute@developer.gserviceaccount.com" --role=roles/pubsub.editor
+gcloud projects add-iam-policy-binding ${proyecto} --member="serviceAccount:${proyecto_numero}-compute@developer.gserviceaccount.com" --role=roles/storage.objectAdmin
+gcloud projects add-iam-policy-binding ${proyecto} --member="serviceAccount:${proyecto_numero}-compute@developer.gserviceaccount.com" --role=roles/artifactregistry.reader
+```
+
+
 # Crear un Bucket en Google Cloud Storage
 
-```gsutil mb gs://thecodemancer_us-east1```
+```gsutil mb gs://${bucket}```
 
-# Create a Pub/Sub topic and a subscription to that topic
+# Crear el dataset y la tabla en BigQuery
 
-```gcloud pubsub topics create test1```
-```gcloud pubsub subscriptions create --topic test1 test_suscription```
-
-# Create a BigQuery dataset and table
-
-```bq --location=us-east1 mk formal-shell-295407:us_east1_test_dataset```
+```bq --location=${region} mk ${proyecto}:${dataset}```
 
 ```bq mk --table formal-shell-295407:us_east1_test_dataset.e_commerce url:STRING,review:STRING,last_date:TIMESTAMP,score:FLOAT,first_date:TIMESTAMP,num_reviews:INTEGER```
 
@@ -69,7 +77,7 @@ gcloud auth application-default login
 
 # Crear Artifact Registry
 
-```gcloud artifacts repositories create test-artifact-repository --repository-format=docker --location=us-east1 --async```
+```gcloud artifacts repositories create ${artifact_registry_name} --repository-format=docker --location=${region} --async```
 
 Antes de poder enviar o extraer imágenes, configure Docker para autenticar solicitudes de Artifact Registry. Para configurar la autenticación en los repositorios de Docker, ejecute el siguiente comando:
 
