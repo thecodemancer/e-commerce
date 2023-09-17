@@ -5,6 +5,16 @@ e-commerce
 
 # Configuración
 
+Creamos variables que se usarán durante la configuración
+
+export proyecto=formal-shell-295407
+export region=us-east1
+bucket=e_commerce
+dataset=E_Commerce
+tabla=ventas_pedidos_proyeccion
+topico=e_commerce
+suscripcion=e_commerce
+
 # Crear Proyecto
 
 ```
@@ -96,22 +106,22 @@ Crear un archivo ```metadata.json``` y guardarlo en Google Cloud Storage
 # Crear la Flex Template
 
 ```
-gcloud dataflow flex-template build gs://thecodemancer_us-east1/samples/dataflow/templates/streaming-beam-sql.json \
-     --image-gcr-path "us-east1-docker.pkg.dev/formal-shell-295407/test-artifact-repository/dataflow/streaming-beam-sql:latest" \
+gcloud dataflow flex-template build gs://thecodemancer_us-east1/samples/dataflow/templates/e_commerce_batch.json \
+     --image-gcr-path "us-east1-docker.pkg.dev/formal-shell-295407/test-artifact-repository/dataflow/e_commerce_batch:latest" \
      --sdk-language "PYTHON" \
      --flex-template-base-image "PYTHON3" \
      --metadata-file "metadata.json" \
      --py-path "." \
-     --env "FLEX_TEMPLATE_PYTHON_PY_FILE=streaming_beam.py" \
+     --env "FLEX_TEMPLATE_PYTHON_PY_FILE=e_commerce_batch.py" \
      --env "FLEX_TEMPLATE_PYTHON_REQUIREMENTS_FILE=requirements.txt"
 ```
 
 # Ejecutar la Flex Template pipeline
 
 ```
-gcloud dataflow flex-template run "streaming-beam-`date +%Y%m%d-%H%M%S`" \
-    --template-file-gcs-location "gs://thecodemancer_us-east1/samples/dataflow/templates/streaming-beam-sql.json" \
-    --parameters input_subscription="projects/formal-shell-295407/subscriptions/test_suscription" \
+gcloud dataflow flex-template run "e_commerce_batch-`date +%Y%m%d-%H%M%S`" \
+    --template-file-gcs-location "gs://thecodemancer_us-east1/samples/dataflow/templates/e_commerce_batch.json" \
+    --parameters input_gcs="projects/formal-shell-295407/subscriptions/test_suscription" \
     --parameters output_table="formal-shell-295407:us_east1_test_dataset.e_commerce" \
     --region "us-east1"
 ```
