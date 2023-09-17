@@ -5,7 +5,36 @@ e-commerce
 
 # Configuración
 
-Crear un Bucket en Google Cloud Storage
+# Crear Proyecto
+
+```
+gcloud projects create formal-shell-295407
+```
+
+Seleccionar el proyecto
+
+```gcloud config set project formal-shell-295407```
+
+# Configurar la facturación
+
+gcloud services enable dataflow compute_component logging storage_component storage_api bigquery pubsub cloudresourcemanager.googleapis.com appengine.googleapis.com artifactregistry.googleapis.com cloudscheduler.googleapis.com cloudbuild.googleapis.com
+
+# Configurar los permisos
+```
+gcloud projects add-iam-policy-binding formal-shell-295407 --member="user:davidregalado255@gmail.com" --role=roles/iam.serviceAccountUser
+```
+
+```
+gcloud projects add-iam-policy-binding formal-shell-295407 --member="serviceAccount:999513749112-compute@developer.gserviceaccount.com" --role=roles/artifactregistry.reader
+```
+
+# Crear credenciales de autenticación local para la cuenta de Google:
+
+```
+gcloud auth application-default login
+```
+
+# Crear un Bucket en Google Cloud Storage
 
 ```gsutil mb gs://thecodemancer_us-east1```
 
@@ -31,6 +60,8 @@ Antes de poder enviar o extraer imágenes, configure Docker para autenticar soli
 ```gcloud auth configure-docker us-east1-docker.pkg.dev```
 
 # Metadata
+
+Crear un archivo ```metadata.json``` y guardarlo en Google Cloud Storage
 
 ```
 {
