@@ -4,7 +4,7 @@
 
 # Arquitectura
 
-<img src="https://github.com/thecodemancer/e-commerce/blob/c2c9827aa244894f81d71fef36ae0eef0f5c1018/img/e_commerce_arquitectura.png" />
+<img src="https://github.com/thecodemancer/e-commerce/blob/992b51d525d5d003ec4f34ea6946bbf3a4937a43/img/e_commerce_arquitectura.png" />
 
 # Configuración
 
