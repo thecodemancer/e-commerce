@@ -47,7 +47,7 @@ def filter_rows(dataset:str, element:Dict):
             ) :
             yield pvalue.TaggedOutput('sales_target_null', element)
         else:
-            yield pvalue.TaggedOutput('sales_target_not_null', element)
+            yield pvalue.TaggedOutput('sales_target_not_null', (element['month_of_order_date'], element))
     if dataset=='list_of_orders':
         if (len(element['order_id']) == 0 or 
             len(element['order_date']) == 0 or
@@ -69,7 +69,7 @@ def filter_rows(dataset:str, element:Dict):
             ) :
             yield pvalue.TaggedOutput('order_details_null', element)
         else:
-            yield pvalue.TaggedOutput('order_details_not_null', element)
+            yield pvalue.TaggedOutput('order_details_not_null', (element['order_id'], element))
 
 def split_talent_collection(element):
     for i, experience in enumerate(element['profiles'][0]['experience']):
