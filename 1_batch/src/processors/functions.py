@@ -70,15 +70,3 @@ def filter_rows(dataset:str, element:Dict):
             yield pvalue.TaggedOutput('order_details_null', element)
         else:
             yield pvalue.TaggedOutput('order_details_not_null', (element['order_id'], element))
-
-def split_talent_collection(element):
-    for i, experience in enumerate(element['profiles'][0]['experience']):
-        if experience.get('title'):
-            yield pvalue.TaggedOutput('experiences', (experience['title'].lower(), {'coreSignalId':element['coreSignalId'], "position": i}))
-
-    for j, current in enumerate(element['current']):  
-        if current.get('title'):
-            yield pvalue.TaggedOutput('current', (current['title'].lower(), {'coreSignalId':element['coreSignalId'], "position": j}))
-
-    if element['profiles'][0].get('occupation'):
-        yield pvalue.TaggedOutput('main_title', (element['profiles'][0]['occupation'].lower(), {'coreSignalId':element['coreSignalId'], "position": 0}))
