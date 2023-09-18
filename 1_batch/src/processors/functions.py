@@ -11,6 +11,14 @@ log.setLevel(level=logging.INFO)
 def debug(text):
     log.info(f"debug:{text}")
 
+def filter(dataset, element){
+    if dataset=='sales_target':
+        pass
+    if dataset=='list_of_orders':
+        pass
+    if dataset=='order_details':
+        pass
+}
 def split_talent_collection(element):
     for i, experience in enumerate(element['profiles'][0]['experience']):
         if experience.get('title'):

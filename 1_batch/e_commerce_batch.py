@@ -30,20 +30,22 @@ def main(argv=None):
     )
     known_args, pipeline_args = parse_profile_update_args(argv)
 
+    INPUT_GCS=known_args.input_gcs
+    OUTPUT_TABLE=known_args.output_table
     LAST_UPDATE_DATE=datetime.datetime.now() #QA
     LAST_UPDATE_DATE_ISO=datetime.datetime.now().isoformat()#QA
 
     log.info("-"*200)
     log.info("Arguments ")
-    log.info(f"input_gcs:{known_args.input_gcs}")
-    log.info(f"output_table:{known_args.output_table}")
+    log.info(f"INPUT_GCS:{INPUT_GCS}")
+    log.info(f"OUTPUT_TABLE:{OUTPUT_TABLE}")
     log.info(f"LAST_UPDATE_DATE:{LAST_UPDATE_DATE}")
     log.info("-"*200)
 
     with beam.Pipeline(options=pipeline_options) as pipeline:
         # Read the CSV file
         sales_target = (
-                pipeline | 'sales_target' >> beam.io.ReadFromText(f"gs://{input_gcs}/sales_target.csv", skip_header_lines=1)
+                pipeline | 'sales_target' >> beam.io.ReadFromText(f"gs://{INPUT_GCS}/sales_target.csv", skip_header_lines=1)
                 | beam.Map(lambda x: debug(x))
                 )
 
