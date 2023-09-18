@@ -118,14 +118,14 @@ gcloud dataflow flex-template build gs://${bucket}/e_commerce_batch.json \
 
 ```
 gcloud dataflow flex-template run "e_commerce_batch-`date +%Y%m%d-%H%M%S`" \
-    --template-file-gcs-location "gs://thecodemancer_us-east1/samples/dataflow/templates/e_commerce_batch.json" \
-    --parameters input_gcs="projects/formal-shell-295407/subscriptions/test_suscription" \
-    --parameters output_table="formal-shell-295407:us_east1_test_dataset.e_commerce" \
-    --region "us-east1"
+    --template-file-gcs-location "gs://<<BUCKET>>/e_commerce_batch.json" \
+    --parameters input_gcs="${bucket}" \
+    --parameters output_table="${proyecto}:${dataset}.${tabla}" \
+    --region "${region}"
 ```
 
 # Revisar los resultados en BigQuery
 
 ```
-bq query --use_legacy_sql=false 'SELECT * FROM `'"formal-shell-295407.us_east1_test_dataset.e_commerce"'`'
+bq query --use_legacy_sql=false 'SELECT * FROM `'"${proyecto}:${dataset}.${tabla}"'`'
 ```
