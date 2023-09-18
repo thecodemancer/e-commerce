@@ -71,9 +71,7 @@ gcloud projects add-iam-policy-binding ${proyecto} --member="serviceAccount:${pr
 
 ```bq --location=${region} mk ${proyecto}:${dataset}```
 
-```bq mk --table formal-shell-295407:us_east1_test_dataset.e_commerce url:STRING,review:STRING,last_date:TIMESTAMP,score:FLOAT,first_date:TIMESTAMP,num_reviews:INTEGER```
-
-# Setup del ambiente de desarrollo
+```bq mk --table ${proyecto}:${dataset}.${tabla} schema='month_of_order_date:STRING,category:STRING,target:FLOAT64,order_id:STRING,order_date:STRING,customer_name:STRING,state:STRING,city:STRING,amount:FLOAT64,profit:FLOAT64,quantity:INT64,category:STRING,sub_category:STRING',```
 
 # Crear Artifact Registry
 
