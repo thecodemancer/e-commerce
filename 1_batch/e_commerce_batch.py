@@ -35,13 +35,17 @@ def main(argv=None):
 
     log.info("-"*200)
     log.info("Arguments ")
-    log.info(f"input_gcs:{input_gcs}")
-    log.info(f"output_table:{output_table}")
+    log.info(f"input_gcs:{known_args.input_gcs}")
+    log.info(f"output_table:{known_args.output_table}")
     log.info(f"LAST_UPDATE_DATE:{LAST_UPDATE_DATE}")
     log.info("-"*200)
 
-#    with beam.Pipeline(options=pipeline_options) as pipeline:
-
+    with beam.Pipeline(options=pipeline_options) as pipeline:
+        # Read the CSV file
+        lines = (
+                pipeline | 'ReadCSV' >> beam.io.ReadFromText('gs://thecodemancer_e_commerce/sales_target.csv', skip_header_lines=1)
+                | beam.Map(lambda x: log.info(x))
+                )
 
 if __name__ == "__main__":
     main()
