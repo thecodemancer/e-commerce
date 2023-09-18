@@ -8,14 +8,7 @@
 Creamos variables que se usarán durante la configuración
 
 ```
-export proyecto=thecodemancer-e-commerce-12345
-export proyecto_numero=403223704591
-export region=us-east1
-export bucket=thecodemancer_e_commerce
-export dataset=E_Commerce
-export tabla=proyeccion_y_ventas
-export correo=davidregalado255@gmail.com
-export artifact_registry_name=e-commerce
+source .env
 ```
 
 # Crear Proyecto
