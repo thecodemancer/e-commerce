@@ -8,12 +8,12 @@ import apache_beam.pvalue as pvalue
 log = logging.getLogger(__name__)
 log.setLevel(level=logging.INFO)
 
-def debug(text):
+def debug(text:str):
     log.info(f"debug:{text}")
 
 
 # Define a function to parse the CSV rows into a dictionary format
-def list_of_orders_parse(row):
+def list_of_orders_parse(row:str):
     return {
         'order_id': row[0],
         'order_date': row[1],
@@ -22,14 +22,14 @@ def list_of_orders_parse(row):
         'city': row[4]
     }
 
-def sales_target_parse(row):
+def sales_target_parse(row:str):
     return {
         'month_of_order_date': row[0],
         'category': row[1],
         'target': float(row[2])
     }
 
-def order_details_parse(row):
+def order_details_parse(row:str):
     return {
         'order_id': row[0],
         'amount': float(row[1]),
@@ -39,7 +39,7 @@ def order_details_parse(row):
         'sub_category': row[5]
     }
 
-def filter_rows(dataset, element):
+def filter_rows(dataset:str, element:Dict):
     if dataset=='sales_target':
         if (len(element['month_of_order_date']) == 0 or 
             len(element['category']) == 0 or
@@ -57,7 +57,7 @@ def filter_rows(dataset, element):
             ) :
             yield pvalue.TaggedOutput('list_of_orders_null', element)
         else:
-            yield pvalue.TaggedOutput('list_of_orders_not_null', element)
+            yield pvalue.TaggedOutput('list_of_orders_not_null', (element['list_of_orders'], element))
 
     if dataset=='order_details':
         if (len(element['order_id']) == 0 or
@@ -82,7 +82,3 @@ def split_talent_collection(element):
 
     if element['profiles'][0].get('occupation'):
         yield pvalue.TaggedOutput('main_title', (element['profiles'][0]['occupation'].lower(), {'coreSignalId':element['coreSignalId'], "position": 0}))
-
-def divide(element:Tuple[str,Dict,Dict]):
-    yield pvalue.TaggedOutput('mongodb', element)
-    yield pvalue.TaggedOutput('elasticsearch',element)
