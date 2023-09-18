@@ -10,5 +10,5 @@
 
 Dependiendo del modo de carga, batch o streaming, seguir los pasos indicados en la carpeta correspondiente
 
-- [Batch](https://github.com/thecodemancer/e-commerce/1_batch)
-- [Streaming](https://github.com/thecodemancer/e-commerce/tree/7db681747222cd4c290c1c354ee2d177bc7faec8/2_streaming)
+- [Batch](https://github.com/thecodemancer/e-commerce/tree/main/1_batch)
+- [Streaming](https://github.com/thecodemancer/e-commerce/tree/main/2_streaming)
