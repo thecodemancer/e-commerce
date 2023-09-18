@@ -25,7 +25,7 @@ Seleccionar el proyecto
 
 Verificar que la cuenta de facturación está asociada al proyecto. Ver [esta página](https://cloud.google.com/billing/docs/how-to/verify-billing-enabled#gcloud?hl=en).
 ```
-gcloud beta billing projects describe thecodemancer-e-commerce-12345
+gcloud beta billing projects describe ${proyecto}
 ```
 
 # Habilitar APIs
