@@ -5,9 +5,9 @@ import logging
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 
-#from src.processors import (
-#    NormalizeJobTitlesElasticSearchDoFn
-#)
+from src.processors import (
+    debug
+)
 
 log = logging.getLogger(__name__)
 log.setLevel(level=logging.DEBUG)
@@ -42,10 +42,22 @@ def main(argv=None):
 
     with beam.Pipeline(options=pipeline_options) as pipeline:
         # Read the CSV file
-        lines = (
-                pipeline | 'ReadCSV' >> beam.io.ReadFromText('gs://thecodemancer_e_commerce/sales_target.csv', skip_header_lines=1)
-                | beam.Map(lambda x: log.info(x))
+        sales_target = (
+                pipeline | 'sales_target' >> beam.io.ReadFromText(f"gs://{input_gcs}/sales_target.csv", skip_header_lines=1)
+                | beam.Map(lambda x: debug(x))
                 )
+
+
+        #list_of_orders = (
+        #        pipeline | 'list_of_orders' >> beam.io.ReadFromText('gs://thecodemancer_e_commerce/list_of_orders.csv', skip_header_lines=1)
+        #        | beam.Map(lambda x: log.info(x))
+        #        )
+
+        #order_details = (
+        #        pipeline | 'order_details' >> beam.io.ReadFromText('gs://thecodemancer_e_commerce/order_details.csv', skip_header_lines=1)
+        #        | beam.Map(lambda x: log.info(x))
+        #        )
+
 
 if __name__ == "__main__":
     main()
