@@ -47,19 +47,32 @@ def main(argv=None):
         sales_target = (
                 pipeline | 'sales_target' >> beam.io.ReadFromText(f"gs://{INPUT_GCS}/sales_target.csv", skip_header_lines=1)
                 | beam.Map(lambda x: debug(x))
+        #        | beam.Map(filter_rows, dataset='sales_target').with_outputs(
+        #                                                                    'sales_target_null',
+        #                                                                    'sales_target_not_null'
+        #                                                                    )
                 )
 
 
-        #list_of_orders = (
-        #        pipeline | 'list_of_orders' >> beam.io.ReadFromText('gs://thecodemancer_e_commerce/list_of_orders.csv', skip_header_lines=1)
-        #        | beam.Map(lambda x: log.info(x))
-        #        )
+        list_of_orders = (
+                pipeline | 'list_of_orders' >> beam.io.ReadFromText('gs://thecodemancer_e_commerce/list_of_orders.csv', skip_header_lines=1)
+                | beam.Map(lambda x: log.info(x))
+        #        | beam.Map(filter_rows, dataset='list_of_orders').with_outputs(
+        #                                                                    'list_of_orders_null',
+        #                                                                    'list_of_orders_not_null'
+        #                                                                    )
+        #
+                )
 
-        #order_details = (
-        #        pipeline | 'order_details' >> beam.io.ReadFromText('gs://thecodemancer_e_commerce/order_details.csv', skip_header_lines=1)
-        #        | beam.Map(lambda x: log.info(x))
-        #        )
+        order_details = (
+                pipeline | 'order_details' >> beam.io.ReadFromText('gs://thecodemancer_e_commerce/order_details.csv', skip_header_lines=1)
+                | beam.Map(lambda x: log.info(x))
+        #        | beam.Map(filter_rows, dataset='order_details').with_outputs(
+        #                                                                    'order_details_null',
+        #                                                                    'order_details_not_null'
+        #                                                                    )
 
+                )
 
 if __name__ == "__main__":
     main()

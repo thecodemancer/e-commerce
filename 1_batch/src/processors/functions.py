@@ -39,7 +39,7 @@ def order_details_parse(row):
         'sub_category': row[5]
     }
 
-def filter(dataset, element):
+def filter_rows(dataset, element):
     if dataset=='sales_target':
         if (len(element['month_of_order_date']) == 0 or 
             len(element['category']) == 0 or
@@ -60,8 +60,8 @@ def filter(dataset, element):
             yield pvalue.TaggedOutput('list_of_orders_not_null', element)
 
     if dataset=='order_details':
-        if len(element['order_id']) == 0
-        if (len(element['amount']) == 0 or 
+        if (len(element['order_id']) == 0 or
+            len(element['amount']) == 0 or 
             len(element['profit']) == 0 or
             len(element['quantity']) == 0 or
             len(element['category']) == 0 or
