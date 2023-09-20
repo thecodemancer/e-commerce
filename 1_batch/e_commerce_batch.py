@@ -33,14 +33,15 @@ def main(argv=None):
 
     PROJECT_ID='thecodemancer-e-commerce-12345'
     OUTPUT_DATASET='E_Commerce'
+    INPUT_GCS=known_args.input_gcs
     OUTPUT_TABLE=known_args.output_table
     LAST_UPDATE_DATE=datetime.datetime.now() #QA
     LAST_UPDATE_DATE_ISO=datetime.datetime.now().isoformat()#QA
 
     log.info("-"*200)
     log.info("Arguments ")
-    log.info(f"INPUT_GCS:{known_args.INPUT_GCS}")
-    log.info(f"OUTPUT_TABLE:{known_args.OUTPUT_TABLE}")
+    log.info(f"INPUT_GCS:{INPUT_GCS}")
+    log.info(f"OUTPUT_TABLE:{OUTPUT_TABLE}")
     log.info(f"LAST_UPDATE_DATE:{LAST_UPDATE_DATE}")
     log.info("-"*200)
 
