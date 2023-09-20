@@ -39,8 +39,8 @@ def main(argv=None):
 
     log.info("-"*200)
     log.info("Arguments ")
-    log.info(f"INPUT_GCS:{INPUT_GCS}")
-    log.info(f"OUTPUT_TABLE:{OUTPUT_TABLE}")
+    log.info(f"INPUT_GCS:{known_args.INPUT_GCS}")
+    log.info(f"OUTPUT_TABLE:{known_args.OUTPUT_TABLE}")
     log.info(f"LAST_UPDATE_DATE:{LAST_UPDATE_DATE}")
     log.info("-"*200)
 
@@ -86,11 +86,12 @@ def main(argv=None):
         )
 
         # Write the rows to BigQuery.
-        rows | 'Write to BigQuery' >> beam.io.WriteToBigQuery(
-            table=f"{PROJECT_ID}.{OUTPUT_DATASET}.{OUTPUT_TABLE}",
-            schema='month_of_order_date:STRING,category:STRING,target:FLOAT64,order_id:STRING,order_date:STRING,customer_name:STRING,state:STRING,city:STRING,amount:FLOAT64,profit:FLOAT64,quantity:INT64,category:STRING,sub_category:STRING',
-            write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
-            create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED,
+        rows = ( proyeccion_y_ventas 
+            | 'Write to BigQuery' >> beam.io.WriteToBigQuery(
+                table=f"{PROJECT_ID}.{OUTPUT_DATASET}.{OUTPUT_TABLE}",
+                schema='month_of_order_date:STRING,category:STRING,target:FLOAT64,order_id:STRING,order_date:STRING,customer_name:STRING,state:STRING,city:STRING,amount:FLOAT64,profit:FLOAT64,quantity:INT64,category:STRING,sub_category:STRING',
+                write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
+                create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED
         )        
 
 if __name__ == "__main__":
