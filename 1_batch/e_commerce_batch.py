@@ -49,7 +49,7 @@ def main(argv=None):
         # Read the CSV file
         sales_target = (
                 pipeline | 'read sales_target' >> beam.io.ReadFromText(f"gs://{INPUT_GCS}/sales_target.csv", skip_header_lines=1)
-                | beam.Map(lambda x: debug(x))
+                #| beam.Map(lambda x: debug(x))
                 | beam.Map(filter_rows, dataset='sales_target').with_outputs(
                                                                             'sales_target_null',
                                                                             'sales_target_not_null'
@@ -58,7 +58,7 @@ def main(argv=None):
 
         list_of_orders = (
                 pipeline | 'read list_of_orders' >> beam.io.ReadFromText('gs://thecodemancer_e_commerce/list_of_orders.csv', skip_header_lines=1)
-                | beam.Map(lambda x: debug(x))
+                #| beam.Map(lambda x: debug(x))
                 | beam.Map(filter_rows, dataset='list_of_orders').with_outputs(
                                                                             'list_of_orders_null',
                                                                             'list_of_orders_not_null'
@@ -67,7 +67,7 @@ def main(argv=None):
 
         order_details = (
                 pipeline | 'read order_details' >> beam.io.ReadFromText('gs://thecodemancer_e_commerce/order_details.csv', skip_header_lines=1)
-                | beam.Map(lambda x: debug(x))
+                #| beam.Map(lambda x: debug(x))
                 | beam.Map(filter_rows, dataset='order_details').with_outputs(
                                                                             'order_details_null',
                                                                             'order_details_not_null'
