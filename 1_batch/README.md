@@ -19,7 +19,9 @@ gcloud projects create ${proyecto}
 
 Seleccionar el proyecto
 
-```gcloud config set project ${proyecto}```
+```
+gcloud config set project ${proyecto}
+```
 
 # Configurar la facturación
 
