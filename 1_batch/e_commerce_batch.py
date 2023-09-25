@@ -46,54 +46,94 @@ def main(argv=None):
     log.info("-"*200)
 
     with beam.Pipeline(options=pipeline_options) as pipeline:
-        # Read the CSV file
+       
         sales_target = (
-                pipeline | 'read sales_target' >> beam.io.ReadFromText(f"gs://{INPUT_GCS}/sales_target.csv", skip_header_lines=1)
+                pipeline | 'read sales_target' >> beam.io.ReadFromText(f'gs://{bucket}/sales_target.csv', skip_header_lines=1)
+                | 'filter valid rows in sales_target' >> beam.FlatMap(valid_rows, dataset='sales_target').with_outputs(
+                                                                            'valid_rows',
+                                                                            'invalid_rows'
+                                                                            )   
+        )
+        sales_target2 = ( sales_target['valid_rows']
                 | 'split sales_target' >> beam.Map(lambda line: line.split(','))
-                | beam.Map(filter_rows, dataset='sales_target').with_outputs(
-                                                                            'sales_target_null',
-                                                                            'sales_target_not_null'
-                                                                            )
+                | beam.Map(lambda line: sales_target_parse(line))
+                | 'filter valid columns in sales_target' >> beam.FlatMap(valid_columns, dataset='sales_target').with_outputs(
+                                                                            'valid_columns',
+                                                                            'invalid_columns'
+                                                                            )                
                 )
-
+        
         list_of_orders = (
-                pipeline | 'read list_of_orders' >> beam.io.ReadFromText('gs://thecodemancer_e_commerce/list_of_orders.csv', skip_header_lines=1)
+                pipeline | 'read list_of_orders' >> beam.io.ReadFromText(f'gs://{bucket}/list_of_orders.csv', skip_header_lines=1)
+                | 'filter valid rows in list_of_orders' >> beam.FlatMap(valid_rows, dataset='sales_target').with_outputs(
+                                                                            'valid_rows',
+                                                                            'invalid_rows'
+                                                                            )  
+                )
+        list_of_orders2 = ( list_of_orders['valid_rows']        
                 | 'split list_of_orders' >> beam.Map(lambda line: line.split(','))
-                | beam.Map(filter_rows, dataset='list_of_orders').with_outputs(
-                                                                            'list_of_orders_null',
-                                                                            'list_of_orders_not_null'
+                | beam.Map(lambda line: list_of_orders_parse(line))
+                | 'split list_of_orders by null values' >> beam.FlatMap(valid_columns, dataset='list_of_orders').with_outputs(
+                                                                            'valid_columns',
+                                                                            'invalid_columns'
                                                                             )
                 )
 
         order_details = (
-                pipeline | 'read order_details' >> beam.io.ReadFromText('gs://thecodemancer_e_commerce/order_details.csv', skip_header_lines=1)
+                pipeline | 'read order_details' >> beam.io.ReadFromText(f'gs://{bucket}/order_details.csv', skip_header_lines=1)
+                | 'filter valid rows in order_details' >> beam.FlatMap(valid_rows, dataset='order_details').with_outputs(
+                                                                                            'valid_rows',
+                                                                                            'invalid_rows'
+                                                                                            )  
+        )
+        order_details2 = ( order_details['valid_rows']        
                 | 'split order_details' >> beam.Map(lambda line: line.split(','))
-                | beam.Map(filter_rows, dataset='order_details').with_outputs(
-                                                                            'order_details_null',
-                                                                            'order_details_not_null'
+                | beam.Map(lambda line: order_details_parse(line))
+                | 'split order_details by null values' >> beam.FlatMap(valid_columns, dataset='order_details').with_outputs(
+                                                                            'valid_columns',
+                                                                            'invalid_columns'
                                                                             )
                 )
 
         list_of_orders_order_details = (
-            {"list_of_orders":list_of_orders['list_of_orders_not_null'], "order_details": order_details['order_details_not_null']}
+            {"A":list_of_orders2['valid_columns'], "B": order_details2['valid_columns']}
             | "CoGroupByKey1" >> beam.CoGroupByKey()
-            | beam.Map(lambda x: debug(x))
+            | beam.ParDo(merge_datasets)
+            | beam.Map(lambda element: (element['order_id'],
+                                        {
+                                          'order_id': element['order_id'],
+                                          'order_date': element['order_date'],
+                                          'customer_name': element['customer_name'],
+                                          'state': element['state'],
+                                          'city': element['city'],
+                                          'amount': element['amount'],
+                                          'profit': element['profit'],
+                                          'quantity': element['quantity'],
+                                          'category': element['category'],
+                                          'sub_category': element['sub_category']
+                                        }))
         )
-
+    
         proyeccion_y_ventas = (
-            {"list_of_orders_order_details":list_of_orders_order_details['list_of_orders_not_null'], "sales_target": sales_target['sales_target_not_null']}
+            {"A":sales_target2['valid_columns'], "B": list_of_orders_order_details}
             | "CoGroupByKey2" >> beam.CoGroupByKey()
-            | beam.Map(lambda x: debug(x))
+            #| beam.Map(merge_datasets2)
+            | beam.Map(print)
         )
 
+    '''
         # Write the rows to BigQuery.
         rows = ( proyeccion_y_ventas 
             | 'Write to BigQuery' >> beam.io.WriteToBigQuery(
-                table=f"{PROJECT_ID}.{OUTPUT_DATASET}.{OUTPUT_TABLE}",
+                table=f"{proyecto}.{dataset}.{tabla}",
                 schema='month_of_order_date:STRING,category:STRING,target:FLOAT64,order_id:STRING,order_date:STRING,customer_name:STRING,state:STRING,city:STRING,amount:FLOAT64,profit:FLOAT64,quantity:INT64,category:STRING,sub_category:STRING',
                 write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
-                create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED
+                create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED,
+                custom_gcs_temp_location=f"gs://{bucket}"
                 )        
             )
+    '''
+
+
 if __name__ == "__main__":
     main()
