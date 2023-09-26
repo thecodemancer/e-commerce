@@ -54,7 +54,7 @@ def main(argv=None):
     with beam.Pipeline(options=pipeline_options) as pipeline:
        
         sales_target = (
-                pipeline | 'read sales_target' >> beam.io.ReadFromText(f'gs://{bucket}/sales_target.csv', skip_header_lines=1)
+                pipeline | 'read sales_target' >> beam.io.ReadFromText(f'gs://{INPUT_GCS}/sales_target.csv', skip_header_lines=1)
                 | 'filter valid rows in sales_target' >> beam.FlatMap(valid_rows, dataset='sales_target').with_outputs(
                                                                             'valid_rows',
                                                                             'invalid_rows'
@@ -70,7 +70,7 @@ def main(argv=None):
                 )
 
         list_of_orders = (
-                pipeline | 'read list_of_orders' >> beam.io.ReadFromText(f'gs://{bucket}/list_of_orders.csv', skip_header_lines=1)
+                pipeline | 'read list_of_orders' >> beam.io.ReadFromText(f'gs://{INPUT_GCS}/list_of_orders.csv', skip_header_lines=1)
                 | 'filter valid rows in list_of_orders' >> beam.FlatMap(valid_rows, dataset='sales_target').with_outputs(
                                                                             'valid_rows',
                                                                             'invalid_rows'
@@ -86,7 +86,7 @@ def main(argv=None):
                 )
 
         order_details = (
-                pipeline | 'read order_details' >> beam.io.ReadFromText(f'gs://{bucket}/order_details.csv', skip_header_lines=1)
+                pipeline | 'read order_details' >> beam.io.ReadFromText(f'gs://{INPUT_GCS}/order_details.csv', skip_header_lines=1)
                 | 'filter valid rows in order_details' >> beam.FlatMap(valid_rows, dataset='order_details').with_outputs(
                                                                                             'valid_rows',
                                                                                             'invalid_rows'
