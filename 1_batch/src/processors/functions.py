@@ -84,17 +84,28 @@ def valid_columns(element: Dict, dataset: str):
 #    print(f"ERROR:{element}")
 #    print(e)
 
-def merge_datasets(element):
+def merge_datasets(element, sales_target):
+
+  df_sales_target = pd.DataFrame(sales_target.values())
+
+  # Convert date columns to period
+  df_sales_target['target_period'] = pd.to_datetime(df_sales_target['month_of_order_date'], format='%b-%y').dt.to_period('M')
+
+
   for e1 in element[1]['A']:
     df1=pd.DataFrame([e1])
 
     # Convert date columns to a common format
-#    df1['order_period'] = pd.to_datetime(df1['order_date'], format='%d-%m-%Y').dt.to_period('M')
+    df1['order_period'] = pd.to_datetime(df1['order_date'], format='%d-%m-%Y').dt.to_period('M')
+
+    # Merge dataframes based on the common month_year column
+    merged_df = pd.merge(df1, df_sales_target, left_on="order_period", right_on="target_period", how='left')
 
     for e2 in element[1]['B']:
       df2=pd.DataFrame([e2])
-      df3=df1.merge(df2, how='left', left_on="order_id", right_on="order_id").to_dict("records")[0]
+      df3=merged_df.merge(df2, how='left', left_on="order_id", right_on="order_id").to_dict("records")[0]
       yield df3
+
 #(element['month_of_order_date'], element)
 def merge_datasets2(element):
     return element

@@ -53,6 +53,8 @@ def main(argv=None):
 
     with beam.Pipeline(options=pipeline_options) as pipeline:
        
+        # Read the CSV file
+                
         sales_target = (
                 pipeline | 'read sales_target' >> beam.io.ReadFromText(f'gs://{bucket}/sales_target.csv', skip_header_lines=1)
                 | 'filter valid rows in sales_target' >> beam.FlatMap(valid_rows, dataset='sales_target').with_outputs(
@@ -104,21 +106,25 @@ def main(argv=None):
         list_of_orders_order_details = (
             {"A":list_of_orders2['valid_columns'], "B": order_details2['valid_columns']}
             | "CoGroupByKey1" >> beam.CoGroupByKey()
-            | beam.ParDo(merge_datasets)
-            | beam.Map(lambda element: (element['order_id'],
-                                        {
-                                          'order_id': element['order_id'],
-                                          'order_date': element['order_date'],
-                                          'customer_name': element['customer_name'],
-                                          'state': element['state'],
-                                          'city': element['city'],
-                                          'amount': element['amount'],
-                                          'profit': element['profit'],
-                                          'quantity': element['quantity'],
-                                          'category': element['category'],
-                                          'sub_category': element['sub_category']
-                                        }))
+            | beam.ParDo(merge_datasets, beam.pvalue.AsDict(sales_target2['valid_columns']))
+#            | beam.Map(lambda element: (element['order_id'],
+#                                        {
+#                                          'order_period': element['order_period'],
+#                                          'order_id': element['order_id'],
+#                                          'order_date': element['order_date'],
+#                                          'customer_name': element['customer_name'],
+#                                          'state': element['state'],
+#                                          'city': element['city'],
+#                                          'amount': element['amount'],
+#                                          'profit': element['profit'],
+#                                          'quantity': element['quantity'],
+#                                          'category': element['category'],
+#                                          'sub_category': element['sub_category']
+#                                        }))
+#
         )
+
+        '''
     
         proyeccion_y_ventas = (
             {"A":sales_target2['valid_columns'], "B": list_of_orders_order_details}
@@ -126,8 +132,6 @@ def main(argv=None):
             #| beam.Map(merge_datasets2)
             | beam.Map(print)
         )
-
-    '''
         # Write the rows to BigQuery.
         rows = ( proyeccion_y_ventas 
             | 'Write to BigQuery' >> beam.io.WriteToBigQuery(
@@ -138,8 +142,7 @@ def main(argv=None):
                 custom_gcs_temp_location=f"gs://{bucket}"
                 )        
             )
-    '''
-
+        '''
 
 if __name__ == "__main__":
     main()
