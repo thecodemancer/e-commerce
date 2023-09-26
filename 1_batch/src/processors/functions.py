@@ -96,4 +96,5 @@ def merge_datasets(element):
       df3=df1.merge(df2, how='left', left_on="order_id", right_on="order_id").to_dict("records")[0]
       yield df3
 #(element['month_of_order_date'], element)
-#def merge_datasets2(element):
+def merge_datasets2(element):
+    return element

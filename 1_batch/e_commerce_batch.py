@@ -7,7 +7,13 @@ from apache_beam.options.pipeline_options import PipelineOptions
 
 from src.processors import (
     debug,
-    filter_rows
+    list_of_orders_parse,
+    sales_target_parse,
+    order_details_parse,
+    valid_rows,
+    valid_columns,
+    merge_datasets,
+    merge_datasets2
 )
 
 log = logging.getLogger(__name__)
