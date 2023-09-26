@@ -53,8 +53,6 @@ def main(argv=None):
 
     with beam.Pipeline(options=pipeline_options) as pipeline:
        
-        # Read the CSV file
-                
         sales_target = (
                 pipeline | 'read sales_target' >> beam.io.ReadFromText(f'gs://{bucket}/sales_target.csv', skip_header_lines=1)
                 | 'filter valid rows in sales_target' >> beam.FlatMap(valid_rows, dataset='sales_target').with_outputs(
@@ -68,9 +66,9 @@ def main(argv=None):
                 | 'filter valid columns in sales_target' >> beam.FlatMap(valid_columns, dataset='sales_target').with_outputs(
                                                                             'valid_columns',
                                                                             'invalid_columns'
-                                                                            )                
+                                                                            )   
                 )
-        
+
         list_of_orders = (
                 pipeline | 'read list_of_orders' >> beam.io.ReadFromText(f'gs://{bucket}/list_of_orders.csv', skip_header_lines=1)
                 | 'filter valid rows in list_of_orders' >> beam.FlatMap(valid_rows, dataset='sales_target').with_outputs(
@@ -103,46 +101,26 @@ def main(argv=None):
                                                                             )
                 )
 
-        list_of_orders_order_details = (
+        orders_and_details_and_target = (
             {"A":list_of_orders2['valid_columns'], "B": order_details2['valid_columns']}
             | "CoGroupByKey1" >> beam.CoGroupByKey()
+            | beam.Filter(lambda element: element[0] == 'B-25601')
             | beam.ParDo(merge_datasets, beam.pvalue.AsDict(sales_target2['valid_columns']))
-#            | beam.Map(lambda element: (element['order_id'],
-#                                        {
-#                                          'order_period': element['order_period'],
-#                                          'order_id': element['order_id'],
-#                                          'order_date': element['order_date'],
-#                                          'customer_name': element['customer_name'],
-#                                          'state': element['state'],
-#                                          'city': element['city'],
-#                                          'amount': element['amount'],
-#                                          'profit': element['profit'],
-#                                          'quantity': element['quantity'],
-#                                          'category': element['category'],
-#                                          'sub_category': element['sub_category']
-#                                        }))
-#
+            #| beam.Filter(lambda element: element['order_id'] == 'B-25601')
         )
 
-        '''
-    
-        proyeccion_y_ventas = (
-            {"A":sales_target2['valid_columns'], "B": list_of_orders_order_details}
-            | "CoGroupByKey2" >> beam.CoGroupByKey()
-            #| beam.Map(merge_datasets2)
-            | beam.Map(print)
-        )
         # Write the rows to BigQuery.
-        rows = ( proyeccion_y_ventas 
+        rows = ( orders_and_details_and_target 
             | 'Write to BigQuery' >> beam.io.WriteToBigQuery(
-                table=f"{proyecto}.{dataset}.{tabla}",
-                schema='month_of_order_date:STRING,category:STRING,target:FLOAT64,order_id:STRING,order_date:STRING,customer_name:STRING,state:STRING,city:STRING,amount:FLOAT64,profit:FLOAT64,quantity:INT64,category:STRING,sub_category:STRING',
+                table=f"{PROJECT_ID}.{OUTPUT_DATASET}.{OUTPUT_TABLE}",
+                schema='order_id:STRING,amount:Float32Array,profit:Float,quantity:INTEGER,category:STRING,sub_category:STRING,order_date:STRING,customer_name:STRING,state:STRING,city:STRING,order_period:STRING,month_of_order_date:STRING,target:FLOAT,sales_target_period:STRING',
                 write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
                 create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED,
-                custom_gcs_temp_location=f"gs://{bucket}"
+                custom_gcs_temp_location=f"gs://{INPUT_GCS}"
                 )        
             )
-        '''
 
 if __name__ == "__main__":
     main()
+    LAST_UPDATE_DATE=datetime.datetime.now() #QA
+    LAST_UPDATE_DATE_ISO=datetime.datetime.now().isoformat()#QA

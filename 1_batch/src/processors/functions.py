@@ -55,7 +55,7 @@ def valid_columns(element: Dict, dataset: str):
             ):
           yield pvalue.TaggedOutput('invalid_columns', element)
         else:
-          yield pvalue.TaggedOutput('valid_columns', (element['month_of_order_date'], element))
+          yield pvalue.TaggedOutput('valid_columns', (str(element['month_of_order_date'])+str(element['category']), element))
 
     if dataset == 'list_of_orders':
         if (
@@ -84,28 +84,29 @@ def valid_columns(element: Dict, dataset: str):
 #    print(f"ERROR:{element}")
 #    print(e)
 
-def merge_datasets(element, sales_target):
+def merge_datasets(element:Tuple[str,Dict], sales_target:Dict):
 
-  df_sales_target = pd.DataFrame(sales_target.values())
+  sales_target_df = pd.DataFrame(sales_target.values())
 
   # Convert date columns to period
-  df_sales_target['target_period'] = pd.to_datetime(df_sales_target['month_of_order_date'], format='%b-%y').dt.to_period('M')
+  sales_target_df['sales_target_period'] = pd.to_datetime(sales_target_df['month_of_order_date'], format='%b-%y').dt.to_period('M').astype(str)
 
+  order_id, elements = element
 
-  for e1 in element[1]['A']:
-    df1=pd.DataFrame([e1])
+  list_of_orders = elements['A']
+  order_details = elements['B']
 
-    # Convert date columns to a common format
-    df1['order_period'] = pd.to_datetime(df1['order_date'], format='%d-%m-%Y').dt.to_period('M')
+  list_of_orders_df = pd.DataFrame(list_of_orders)
+  order_details_df = pd.DataFrame(order_details)
 
-    # Merge dataframes based on the common month_year column
-    merged_df = pd.merge(df1, df_sales_target, left_on="order_period", right_on="target_period", how='left')
+  list_of_orders_df['order_period'] = pd.to_datetime(list_of_orders_df['order_date'], format='%d-%m-%Y').dt.to_period('M').astype(str)
+  
+  orders_and_details_df = pd.merge(order_details_df, list_of_orders_df, how='left', left_on="order_id", right_on="order_id")
 
-    for e2 in element[1]['B']:
-      df2=pd.DataFrame([e2])
-      df3=merged_df.merge(df2, how='left', left_on="order_id", right_on="order_id").to_dict("records")[0]
-      yield df3
+  orders_and_details_and_target_df = pd.merge(orders_and_details_df, sales_target_df, how='left', left_on=["order_period","category"], right_on=["sales_target_period","category"]).to_dict("records")
 
-#(element['month_of_order_date'], element)
+  for output in orders_and_details_and_target_df:
+    yield output
+
 def merge_datasets2(element):
-    return element
+  yield element
