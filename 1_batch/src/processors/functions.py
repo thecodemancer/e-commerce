@@ -1,5 +1,6 @@
 import logging
 import time
+import pandas as pd
 from typing import Dict, List, Tuple, Any
 
 import apache_beam as beam
@@ -39,34 +40,60 @@ def order_details_parse(row:str):
         'sub_category': row[5]
     }
 
-def filter_rows(dataset:str, element:Dict):
-    if dataset=='sales_target':
-        if (len(element['month_of_order_date']) == 0 or 
-            len(element['category']) == 0 or
-            len(element['target']) == 0
-            ) :
-            yield pvalue.TaggedOutput('sales_target_null', element)
-        else:
-            yield pvalue.TaggedOutput('sales_target_not_null', (element['month_of_order_date'], element))
-    if dataset=='list_of_orders':
-        if (len(element['order_id']) == 0 or 
-            len(element['order_date']) == 0 or
-            len(element['customer_name']) == 0 or
-            len(element['state']) == 0 or
-            len(element['city']) == 0
-            ) :
-            yield pvalue.TaggedOutput('list_of_orders_null', element)
-        else:
-            yield pvalue.TaggedOutput('list_of_orders_not_null', (element['list_of_orders'], element))
+def valid_rows(element, dataset: str):
+  if element.strip() == '':
+    yield pvalue.TaggedOutput('invalid_rows', (dataset, element))
+  else:
+    yield pvalue.TaggedOutput('valid_rows', element)
 
-    if dataset=='order_details':
-        if (len(element['order_id']) == 0 or
-            len(element['amount']) == 0 or 
-            len(element['profit']) == 0 or
-            len(element['quantity']) == 0 or
-            len(element['category']) == 0 or
-            len(element['sub_category']) == 0
-            ) :
-            yield pvalue.TaggedOutput('order_details_null', element)
+def valid_columns(element: Dict, dataset: str):
+#  try:
+    if dataset == 'sales_target':
+        if (element['month_of_order_date'] == '' or
+            element['category'] == '' or
+            element['target'] == ''
+            ):
+          yield pvalue.TaggedOutput('invalid_columns', element)
         else:
-            yield pvalue.TaggedOutput('order_details_not_null', (element['order_id'], element))
+          yield pvalue.TaggedOutput('valid_columns', (element['month_of_order_date'], element))
+
+    if dataset == 'list_of_orders':
+        if (
+            element['order_id'] == '' or
+            element['order_date'] == '' or
+            element['customer_name'] == '' or
+            element['state'] == '' or
+            element['city'] == ''
+            ):
+            yield pvalue.TaggedOutput('invalid_columns', element)
+        else:
+            yield pvalue.TaggedOutput('valid_columns', (element['order_id'], element))
+
+    if dataset == 'order_details':
+        if (element['order_id'] == '' or
+            element['amount'] == '' or
+            element['profit'] == '' or
+            element['quantity'] == '' or
+            element['category'] == '' or
+            element['sub_category'] == ''
+            ):
+            yield pvalue.TaggedOutput('invalid_columns', element)
+        else:
+            yield pvalue.TaggedOutput('valid_columns', (element['order_id'], element))
+#  except Exception as e:
+#    print(f"ERROR:{element}")
+#    print(e)
+
+def merge_datasets(element):
+  for e1 in element[1]['A']:
+    df1=pd.DataFrame([e1])
+
+    # Convert date columns to a common format
+#    df1['order_period'] = pd.to_datetime(df1['order_date'], format='%d-%m-%Y').dt.to_period('M')
+
+    for e2 in element[1]['B']:
+      df2=pd.DataFrame([e2])
+      df3=df1.merge(df2, how='left', left_on="order_id", right_on="order_id").to_dict("records")[0]
+      yield df3
+#(element['month_of_order_date'], element)
+#def merge_datasets2(element):
