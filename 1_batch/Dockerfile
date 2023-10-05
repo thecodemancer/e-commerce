@@ -1,19 +1,30 @@
 FROM gcr.io/dataflow-templates-base/python3-template-launcher-base
 
-ENV FLEX_TEMPLATE_PYTHON_REQUIREMENTS_FILE="/template/requirements.txt"
-ENV FLEX_TEMPLATE_PYTHON_PY_FILE="/template/e_commerce_batch.py"
+ARG WORKDIR=/template
+RUN mkdir -p ${WORKDIR}
+RUN mkdir -p ${WORKDIR}/src
+RUN mkdir -p ${WORKDIR}/src/processors
+WORKDIR ${WORKDIR}
 
-COPY . /template
+ARG PYTHON_PY_FILE=e_commerce_batch.py
+
+COPY src /src
+COPY . .
+
+ENV PYTHONPATH ${WORKDIR}
+ENV PYTHONPATH=/src:$PYTHONPATH
+ENV PYTHONPATH=/src/processors:$PYTHONPATH
+
+ENV FLEX_TEMPLATE_PYTHON_PY_FILE="${WORKDIR}/${PYTHON_PY_FILE}"
+ENV FLEX_TEMPLATE_PYTHON_REQUIREMENTS_FILE="${WORKDIR}/requirements.txt"
+ENV FLEX_TEMPLATE_PYTHON_SETUP_FILE="${WORKDIR}/setup.py"
 
 # We could get rid of installing libffi-dev and git, or we could leave them.
 RUN apt-get update \
-    && apt-get install -y libffi-dev git \
-    && rm -rf /var/lib/apt/lists/* \
     # Upgrade pip and install the requirements.
+    && pip install --upgrade pip \
     && pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir -r $FLEX_TEMPLATE_PYTHON_REQUIREMENTS_FILE \
-    # Download the requirements to speed up launching the Dataflow job.
-    && pip download --no-cache-dir --dest /tmp/dataflow-requirements-cache -r $FLEX_TEMPLATE_PYTHON_REQUIREMENTS_FILE
+    && pip download --dest /tmp/dataflow-requirements-cache -r $FLEX_TEMPLATE_PYTHON_REQUIREMENTS_FILE
 
 # Since we already downloaded all the dependencies, there's no need to rebuild everything.
 ENV PIP_NO_DEPS=True
