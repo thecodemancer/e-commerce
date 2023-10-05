@@ -7,17 +7,6 @@ from apache_beam.options.pipeline_options import PipelineOptions
 
 from src.processors.functions import *
 
-#from src.processors.functions import (
-#    debug,
-#    list_of_orders_parse,
-#    sales_target_parse,
-#    order_details_parse,
-#    valid_rows,
-#    valid_columns,
-#    merge_datasets,
-#    merge_datasets2
-#)
-
 log = logging.getLogger(__name__)
 log.setLevel(level=logging.DEBUG)
 
@@ -82,7 +71,6 @@ def main(argv=None):
         list_of_orders2 = ( list_of_orders['valid_rows']        
                 | 'split list_of_orders' >> beam.Map(lambda line: line.split(','))
                 | beam.Map(lambda line: list_of_orders_parse(line))
-                #| beam.Map(lambda line: list_of_orders_parse)
                 | 'split list_of_orders by null values' >> beam.FlatMap(valid_columns, dataset='list_of_orders').with_outputs(
                                                                             'valid_columns',
                                                                             'invalid_columns'
@@ -99,7 +87,6 @@ def main(argv=None):
         order_details2 = ( order_details['valid_rows']        
                 | 'split order_details' >> beam.Map(lambda line: line.split(','))
                 | beam.Map(lambda line: order_details_parse(line))
-                #| beam.Map(lambda line: order_details_parse)
                 | 'split order_details by null values' >> beam.FlatMap(valid_columns, dataset='order_details').with_outputs(
                                                                             'valid_columns',
                                                                             'invalid_columns'
@@ -109,9 +96,7 @@ def main(argv=None):
         orders_and_details_and_target = (
             {"A":list_of_orders2['valid_columns'], "B": order_details2['valid_columns']}
             | "CoGroupByKey1" >> beam.CoGroupByKey()
-            | beam.Filter(lambda element: element[0] == 'B-25601')
             | beam.ParDo(merge_datasets, beam.pvalue.AsDict(sales_target2['valid_columns']))
-            #| beam.Filter(lambda element: element['order_id'] == 'B-25601')
         )
 
         # Write the rows to BigQuery.

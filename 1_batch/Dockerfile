@@ -2,18 +2,13 @@ FROM gcr.io/dataflow-templates-base/python3-template-launcher-base
 
 ARG WORKDIR=/template
 RUN mkdir -p ${WORKDIR}
-RUN mkdir -p ${WORKDIR}/src
-RUN mkdir -p ${WORKDIR}/src/processors
 WORKDIR ${WORKDIR}
 
 ARG PYTHON_PY_FILE=e_commerce_batch.py
 
-COPY src /src
 COPY . .
 
 ENV PYTHONPATH ${WORKDIR}
-ENV PYTHONPATH=/src:$PYTHONPATH
-ENV PYTHONPATH=/src/processors:$PYTHONPATH
 
 ENV FLEX_TEMPLATE_PYTHON_PY_FILE="${WORKDIR}/${PYTHON_PY_FILE}"
 ENV FLEX_TEMPLATE_PYTHON_REQUIREMENTS_FILE="${WORKDIR}/requirements.txt"
