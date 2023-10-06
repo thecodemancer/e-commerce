@@ -103,7 +103,7 @@ def main(argv=None):
         rows = ( orders_and_details_and_target 
             | 'Write to BigQuery' >> beam.io.WriteToBigQuery(
                 table=f"{PROJECT_ID}:{OUTPUT_DATASET}.{OUTPUT_TABLE}",
-                schema='order_id:STRING,amount:Float,profit:Float,quantity:INTEGER,category:STRING,sub_category:STRING,order_date:STRING,customer_name:STRING,state:STRING,city:STRING,order_period:STRING,month_of_order_date:STRING,target:FLOAT,sales_target_period:STRING',
+                schema='order_id:STRING,amount:Float,profit:Float,quantity:INTEGER,category:STRING,sub_category:STRING,order_date:DATE,customer_name:STRING,state:STRING,city:STRING,order_period:STRING,month_of_order_date:STRING,target:FLOAT,sales_target_period:STRING',
                 write_disposition=beam.io.BigQueryDisposition.WRITE_TRUNCATE,
                 create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED,
                 custom_gcs_temp_location=f"gs://{INPUT_GCS}"
