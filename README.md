@@ -6,6 +6,10 @@
 
 <img src="https://github.com/thecodemancer/e-commerce/blob/992b51d525d5d003ec4f34ea6946bbf3a4937a43/img/e_commerce_arquitectura.png" />
 
+# Reporte
+
+<img src="img/E-Commerce.pdf" />
+
 # Configuración
 
 Dependiendo del modo de carga, batch o streaming, seguir los pasos indicados en la carpeta correspondiente
