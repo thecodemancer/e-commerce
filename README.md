@@ -11,6 +11,8 @@
 <img src="https://github.com/thecodemancer/e-commerce/blob/f5fda6812048245780d55bb9b16487b57fbb50ed/img/ecommerce_report_page1.png" />
 <img src="https://github.com/thecodemancer/e-commerce/blob/f5fda6812048245780d55bb9b16487b57fbb50ed/img/ecommerce_report_page2.png" />
 
+[Ver online](https://lookerstudio.google.com/s/pxdRz09-M04)
+
 # Configuración
 
 Dependiendo del modo de carga, batch o streaming, seguir los pasos indicados en la carpeta correspondiente
