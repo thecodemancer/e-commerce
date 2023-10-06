@@ -6,6 +6,10 @@
 
 <img src="https://github.com/thecodemancer/e-commerce/blob/992b51d525d5d003ec4f34ea6946bbf3a4937a43/img/e_commerce_arquitectura.png" />
 
+# El Proceso
+
+<img src="https://github.com/thecodemancer/e-commerce/blob/f55d1d9ef26818b730724aa35adb15ac0b366c70/img/DAG.png" />
+
 # Reporte
 
 <img src="https://github.com/thecodemancer/e-commerce/blob/f5fda6812048245780d55bb9b16487b57fbb50ed/img/ecommerce_report_page1.png" />
