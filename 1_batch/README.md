@@ -107,13 +107,16 @@ Crear un archivo ```metadata.json``` y guardarlo en Google Cloud Storage
 
 ```
 gcloud dataflow flex-template build gs://${bucket}/e_commerce_batch.json \
-     --image-gcr-path "${region}-docker.pkg.dev/${proyecto}/${artifact_registry_name}/dataflow/e_commerce_batch:latest" \
-     --sdk-language "PYTHON" \
-     --flex-template-base-image "PYTHON3" \
-     --metadata-file "metadata.json" \
-     --py-path "." \
-     --env "FLEX_TEMPLATE_PYTHON_PY_FILE=e_commerce_batch.py" \
-     --env "FLEX_TEMPLATE_PYTHON_REQUIREMENTS_FILE=requirements.txt"
+    --image-gcr-path "${region}-docker.pkg.dev/${proyecto}/${artifact_registry_name}/dataflow/e_commerce_batch:latest" \
+    --sdk-language "PYTHON" \
+    --flex-template-base-image "PYTHON3" \
+    --metadata-file "metadata.json" \
+    --py-path "." \
+    --py-path "src/" \
+    --py-path "src/processors/" \
+    --env "FLEX_TEMPLATE_PYTHON_PY_FILE=e_commerce_batch.py" \
+    --env "FLEX_TEMPLATE_PYTHON_REQUIREMENTS_FILE=requirements.txt" \
+    --env "FLEX_TEMPLATE_PYTHON_SETUP_FILE=setup.py" \
 ```
 
 # Ejecutar la Flex Template pipeline
