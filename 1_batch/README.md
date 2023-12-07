@@ -60,7 +60,9 @@ gcloud projects add-iam-policy-binding ${proyecto} --member="serviceAccount:${pr
 
 # Crear un Bucket en Google Cloud Storage
 
-```gsutil mb gs://${bucket}```
+```
+gsutil mb gs://${bucket}
+```
 
 # Crear el dataset y la tabla en BigQuery
 
