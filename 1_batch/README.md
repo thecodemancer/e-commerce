@@ -95,13 +95,23 @@ Crear un archivo ```metadata.json``` y guardarlo en Google Cloud Storage
   "description": "Procesamiento batch para el proyecto E-Commerce.",
   "parameters": [
     {
+      "name": "compute_project_id",
+      "label": "Proyecto GCP para cómputo",
+      "helpText": "ID del proyecto GCP donde se ejecutará el job."
+    },
+    {
       "name": "input_gcs",
-      "label": "Input Bucket",
-      "helpText": "Nombre del bucket de donde se obtendrán los datasets."
+      "label": "Input Bucket.",
+      "helpText": " Nombre del bucket de donde se obrtendrán los datasets."
+    },    
+    {
+      "name": "output_dataset",
+      "label": "Dataset destino en BigQuery.",
+      "helpText": "Nombre del dataset destino en BigQuery."
     },
     {
       "name": "output_table",
-      "label": "Tabla destino en BigQuery",
+      "label": "Tabla destino en BigQuery.",
       "helpText": "Nombre de la tabla destino en BigQuery."
     }
   ]
@@ -127,11 +137,15 @@ gcloud dataflow flex-template build gs://${bucket}/e_commerce_batch.json \
 # Ejecutar la Flex Template pipeline
 
 ```
-gcloud dataflow flex-template run "e_commerce_batch-`date +%Y%m%d-%H%M%S`" \
+gcloud dataflow flex-template run "e-commerce-batch-`date +%Y%m%d-%H%M%S`" \
     --template-file-gcs-location "gs://${bucket}/e_commerce_batch.json" \
+    --region "${region}" \
+    --network ${network_name} \
+    --subnetwork ${subnetwork_url} \
     --parameters input_gcs="${bucket}" \
-    --parameters output_table="${proyecto}:${dataset}.${tabla}" \
-    --region "${region}"
+    --parameters output_table="${tabla}" \
+    --parameters compute_project_id="${proyecto}" \
+    --parameters output_dataset="${dataset}"     
 ```
 
 # Revisar los resultados en BigQuery

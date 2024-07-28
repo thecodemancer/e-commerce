@@ -3,14 +3,24 @@
   "description": "Procesamiento batch para el proyecto E-Commerce.",
   "parameters": [
     {
+      "name": "compute_project_id",
+      "label": "Proyecto GCP para cómputo",
+      "helpText": "ID del proyecto GCP donde se ejecutará el job."
+    },
+    {
       "name": "input_gcs",
       "label": "Input Bucket.",
       "helpText": " Nombre del bucket de donde se obrtendrán los datasets."
+    },    
+    {
+      "name": "output_dataset",
+      "label": "Dataset destino en BigQuery.",
+      "helpText": "Nombre del dataset destino en BigQuery."
     },
     {
       "name": "output_table",
       "label": "Tabla destino en BigQuery.",
-      "helpText": "Nombre de la tabla destino en BigQuery"
+      "helpText": "Nombre de la tabla destino en BigQuery."
     }
   ]
 }

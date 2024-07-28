@@ -16,7 +16,9 @@ def parse_profile_update_args(argv=None):
     job_name and template_location are provided by Dataflow at runtime. These are inputs for calculating the job_id
     '''
     parser = argparse.ArgumentParser()
+    parser.add_argument("--compute_project_id", dest="compute_project_id")
     parser.add_argument("--input_gcs", dest="input_gcs")
+    parser.add_argument("--output_dataset", dest="output_dataset")
     parser.add_argument("--output_table", dest="output_table")
 
     known_args, pipeline_args = parser.parse_known_args(argv)
@@ -29,8 +31,8 @@ def main(argv=None):
     )
     known_args, pipeline_args = parse_profile_update_args(argv)
 
-    PROJECT_ID='thecodemancer-e-commerce-12345'
-    OUTPUT_DATASET='E_Commerce'
+    PROJECT_ID=known_args.compute_project_id    #'thecodemancer-e-commerce-12345'
+    OUTPUT_DATASET=known_args.output_dataset #'E_Commerce'
     INPUT_GCS=known_args.input_gcs
     OUTPUT_TABLE=known_args.output_table
     LAST_UPDATE_DATE=datetime.datetime.now() #QA
@@ -38,7 +40,9 @@ def main(argv=None):
 
     log.info("-"*200)
     log.info("Arguments ")
+    log.info(f"PROJECT_ID:{PROJECT_ID}")
     log.info(f"INPUT_GCS:{INPUT_GCS}")
+    log.info(f"OUTPUT_DATASET:{OUTPUT_DATASET}")
     log.info(f"OUTPUT_TABLE:{OUTPUT_TABLE}")
     log.info(f"LAST_UPDATE_DATE:{LAST_UPDATE_DATE}")
     log.info("-"*200)
@@ -102,14 +106,16 @@ def main(argv=None):
         # Write the rows to BigQuery.
         rows = ( orders_and_details_and_target 
             | 'Write to BigQuery' >> beam.io.WriteToBigQuery(
-                table=f"{PROJECT_ID}:{OUTPUT_DATASET}.{OUTPUT_TABLE}",
+                project=f"{PROJECT_ID}",
+                dataset=f"{OUTPUT_DATASET}",
+                table=f"{OUTPUT_TABLE}",
                 schema='order_id:STRING,amount:Float,profit:Float,quantity:INTEGER,category:STRING,sub_category:STRING,order_date:DATE,customer_name:STRING,state:STRING,city:STRING,order_period:STRING,month_of_order_date:STRING,target:FLOAT,sales_target_period:STRING',
                 write_disposition=beam.io.BigQueryDisposition.WRITE_TRUNCATE,
                 create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED,
                 custom_gcs_temp_location=f"gs://{INPUT_GCS}"
                 )        
             )
-
+               
 #        beam.io.WriteToBigQuery(
 #            # The table name is a required argument for the BigQuery sink.
 #            # In this case we use the value passed in from the command line.
