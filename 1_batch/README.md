@@ -66,9 +66,12 @@ gsutil mb gs://${bucket}
 
 # Crear el dataset y la tabla en BigQuery
 
-```bq --location=${region} mk ${proyecto}:${dataset}```
-
-```bq mk --table ${proyecto}:${dataset}.${tabla} schema='month_of_order_date:STRING,category:STRING,target:FLOAT64,order_id:STRING,order_date:STRING,customer_name:STRING,state:STRING,city:STRING,amount:FLOAT64,profit:FLOAT64,quantity:INT64,category:STRING,sub_category:STRING',```
+```
+bq --location=${region} mk ${proyecto}:${dataset}
+```
+```
+bq mk --schema='order_id:STRING,amount:FLOAT,profit:FLOAT,quantity:INTEGER,category:STRING,sub_category:STRING,order_date:DATE,customer_name:STRING,state:STRING,city:STRING,order_period:STRING,month_of_order_date:STRING,target:FLOAT,sales_target_period:STRING' --table ${proyecto}:${dataset}.${tabla}
+```
 
 # Crear Artifact Registry
 
@@ -118,14 +121,14 @@ gcloud dataflow flex-template build gs://${bucket}/e_commerce_batch.json \
     --py-path "src/processors/" \
     --env "FLEX_TEMPLATE_PYTHON_PY_FILE=e_commerce_batch.py" \
     --env "FLEX_TEMPLATE_PYTHON_REQUIREMENTS_FILE=requirements.txt" \
-    --env "FLEX_TEMPLATE_PYTHON_SETUP_FILE=setup.py" \
+    --env "FLEX_TEMPLATE_PYTHON_SETUP_FILE=setup.py"
 ```
 
 # Ejecutar la Flex Template pipeline
 
 ```
 gcloud dataflow flex-template run "e_commerce_batch-`date +%Y%m%d-%H%M%S`" \
-    --template-file-gcs-location "gs://<<BUCKET>>/e_commerce_batch.json" \
+    --template-file-gcs-location "gs://${bucket}/e_commerce_batch.json" \
     --parameters input_gcs="${bucket}" \
     --parameters output_table="${proyecto}:${dataset}.${tabla}" \
     --region "${region}"
